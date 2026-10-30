@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build / pack output
+dist/
+*.tgz
+
+# Local runtime artifacts of the extension
+jev-router-catalog.json
+jev-router.json
+.pi/jev-router.json
+.pi/jev-router-catalog.json
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs, coverage, caches
+*.log
+npm-debug.log*
+coverage/
+.cache/
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/

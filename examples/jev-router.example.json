@@ -1,0 +1,44 @@
+{
+  "_readme": [
+    "Example configuration for the pi-jev-mgt extension (jev-router).",
+    "Copy to ~/.pi/agent/jev-router.json, or to <project>/.pi/jev-router.json,",
+    "or point $PI_JEV_ROUTER_CONFIG at it. The file is re-read on change.",
+    "",
+    "Slugs and prices change often: run /jev-recommend to rank the 3 most",
+    "suitable models from the live OpenRouter catalog, or /jev-models to browse",
+    "and edit this list interactively.",
+    "",
+    "Prices below are only illustrative. `models` is a preference list WITH",
+    "fallback on OpenRouter's side; `excludedModels` is a HARD restriction and is",
+    "the actual cost guardrail."
+  ],
+  "enabled": true,
+  "routerModel": "typesafe/jev-router",
+  "costTier": "low",
+  "allowedModels": [
+    {
+      "model": "z-ai/glm-5.3-flash",
+      "tier": "flash",
+      "note": "cheap, 1M ctx, vision - verify price with /jev-recommend"
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "tier": "balanced",
+      "note": "quality/price sweet spot, 1M ctx, vision"
+    },
+    {
+      "model": "moonshotai/kimi-k2.7-code",
+      "tier": "power",
+      "note": "coding specialist"
+    }
+  ],
+  "excludedModels": [
+    "openrouter/*",
+    "typesafe/*",
+    "*:batch*",
+    "*:free*",
+    "anthropic/claude-opus*",
+    "openai/gpt-*-pro*",
+    "google/gemini-*-pro*"
+  ]
+}

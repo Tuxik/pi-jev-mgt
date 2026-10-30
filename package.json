@@ -1,0 +1,64 @@
+{
+  "name": "pi-jev-mgt",
+  "version": "0.1.0",
+  "description": "Manage OpenRouter's jev-router from inside Pi: curated allowed models, hard cost exclusions, cost tier, and live-price recommendations for the 3 best models.",
+  "keywords": [
+    "pi-package",
+    "pi",
+    "openrouter",
+    "jev-router",
+    "model-routing",
+    "llm",
+    "cost-control",
+    "extension"
+  ],
+  "license": "MIT",
+  "author": "Tuxik",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tuxik/pi-jev-mgt.git"
+  },
+  "homepage": "https://github.com/Tuxik/pi-jev-mgt#readme",
+  "bugs": {
+    "url": "https://github.com/Tuxik/pi-jev-mgt/issues"
+  },
+  "type": "module",
+  "files": [
+    "extensions/",
+    "examples/",
+    "README.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions/jev-router.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-ai": {
+      "optional": true
+    },
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@earendil-works/pi-ai": "^1.4.0",
+    "@earendil-works/pi-coding-agent": "^1.4.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

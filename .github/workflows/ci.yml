@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Verify published tarball contents
+        run: npm pack --dry-run
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Run gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          set -euo pipefail
+          base="https://github.com/gitleaks/gitleaks/releases/download"
+          name="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL "${base}/v${GITLEAKS_VERSION}/${name}" | tar -xz gitleaks
+          ./gitleaks detect --no-banner --redact --source . --exit-code 1
+      - name: Fail on committed credential or config files
+        run: |
+          set -euo pipefail
+          tracked=$(git ls-files)
+          if printf '%s\n' "$tracked" | grep -Ei \
+            '(^|/)(\.env($|\.)|id_rsa|id_ed25519|.*\.pem|.*\.p12)$'; then
+            echo "::error::Credential-like files are tracked"
+            exit 1
+          fi
+          if printf '%s\n' "$tracked" | grep -Ei \
+            '(^|/)jev-router(-catalog)?\.json$'; then
+            echo "::error::Local jev-router config is tracked"
+            exit 1
+          fi
