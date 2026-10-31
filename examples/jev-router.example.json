@@ -14,7 +14,16 @@
     "",
     "`language` sets the language of the extension UI: \"auto\" (default, follows",
     "Pi's settings, then $PI_LANG, then the system locale), or one of en, fr, es,",
-    "it, de. It can also be changed from /jev-models -> Language."
+    "it, de. It can also be changed from /jev-models -> Language.",
+    "",
+    "This one file drives both routing paths:",
+    "  pi --model jev/auto              -> Pi routes locally as a virtual model",
+    "  pi --model typesafe/jev-router    -> OpenRouter routes server-side",
+    "",
+    "Per-entry `tier` (flash/balanced/power) is operative on the jev/auto path:",
+    "the router prefers an entry whose tier matches the requested band, in list",
+    "order. With jev/auto, the selected thinking level picks the band: low ->",
+    "flash, medium -> balanced, high/xhigh/max -> power. costTier caps both."
   ],
   "enabled": true,
   "routerModel": "typesafe/jev-router",

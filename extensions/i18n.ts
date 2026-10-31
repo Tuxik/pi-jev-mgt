@@ -133,6 +133,7 @@ export interface Messages {
 	summaryTitle(routerModel: string, active: boolean, tier: string): string;
 	summaryConfig(path: string, missing: boolean): string;
 	summaryLanguage(name: string): string;
+	summaryVirtual(id: string): string;
 	noRestriction: string;
 	allowedHeader(count: number): string;
 	noExclusions: string;
@@ -222,6 +223,7 @@ export interface Messages {
 	ceilingDearest(dearest: string): string;
 	bandFlash: string;
 	bandBalanced: string;
+	bandPower: string;
 	reasonBand(band: string, limit: string): string;
 	reasonPower(limit: string): string;
 	reasonFill: string;
@@ -251,6 +253,8 @@ export interface Messages {
 	statusConfigMissing: string;
 	statusTier(tier: string): string;
 	missingConfigWarning(path: string): string;
+	routerConfigMissing(path: string): string;
+	routerNoCandidate(band: string, ceiling: string): string;
 
 	// Slash-command descriptions (shown in Pi's command list)
 	cmdModels: string;
@@ -355,6 +359,7 @@ const en: Messages = {
 	ceilingDearest: (dearest) => `dearest model in the list (${dearest} $/Mtok) + 10%`,
 	bandFlash: "Flash band",
 	bandBalanced: "Balanced band",
+	bandPower: "Power band",
 	reasonBand: (band, limit) => `${band} (≤ ${limit} $/Mtok): best capability-to-price ratio.`,
 	reasonPower: (limit) =>
 		`Power band (≤ ${limit} $/Mtok): maximal capabilities at the lowest price for equal capabilities.`,
@@ -388,6 +393,11 @@ const en: Messages = {
 	statusTier: (tier) => `tier ${tier}`,
 	missingConfigWarning: (path) =>
 		`Jev Router: no config found (${path}). The router is unrestricted. Run /jev-models to create one.`,
+	summaryVirtual: (id) => `Virtual model: ${id} — select it with /model to route inside Pi`,
+	routerConfigMissing: (path) =>
+		`Jev Router: no config found (${path}). jev/auto routes from the whole catalog under the cost tier. Run /jev-models to curate it.`,
+	routerNoCandidate: (band, ceiling) =>
+		`No model available (${band}, ceiling ${ceiling} $/Mtok). Loosen excludedModels, raise costTier, or add a model with /jev-models.`,
 
 	cmdModels: "Manage the models the typesafe/jev-router router is allowed to pick",
 	cmdRecommend: "Suggest the 3 models best suited to the router, from the live OpenRouter catalog",
@@ -491,6 +501,7 @@ const fr: Messages = {
 	ceilingDearest: (dearest) => `modèle le plus cher de la liste (${dearest} $/Mtok) + 10 %`,
 	bandFlash: "Bande flash",
 	bandBalanced: "Bande équilibrée",
+	bandPower: "Bande haute",
 	reasonBand: (band, limit) => `${band} (≤ ${limit} $/Mtok) : meilleur rapport capacités/prix.`,
 	reasonPower: (limit) =>
 		`Bande haute (≤ ${limit} $/Mtok) : capacités maximales, au prix le plus bas à capacités égales.`,
@@ -524,6 +535,11 @@ const fr: Messages = {
 	statusTier: (tier) => `tier ${tier}`,
 	missingConfigWarning: (path) =>
 		`Jev Router : aucune config trouvée (${path}). Le routeur n'est pas restreint. Lancez /jev-models pour en créer une.`,
+	summaryVirtual: (id) => `Modèle virtuel : ${id} — le sélectionner avec /model pour router dans Pi`,
+	routerConfigMissing: (path) =>
+		`Jev Router : aucune config trouvée (${path}). jev/auto route depuis tout le catalogue sous le cost tier. Lancez /jev-models pour la restreindre.`,
+	routerNoCandidate: (band, ceiling) =>
+		`Aucun modèle disponible (${band}, plafond ${ceiling} $/Mtok). Alléger excludedModels, relever costTier ou ajouter un modèle avec /jev-models.`,
 
 	cmdModels: "Gérer les modèles autorisés par le routeur typesafe/jev-router",
 	cmdRecommend: "Propose les 3 modèles les plus adaptés au routeur, d'après le catalogue OpenRouter en direct",
@@ -627,6 +643,7 @@ const es: Messages = {
 	ceilingDearest: (dearest) => `modelo más caro de la lista (${dearest} $/Mtok) + 10 %`,
 	bandFlash: "Banda flash",
 	bandBalanced: "Banda equilibrada",
+	bandPower: "Banda alta",
 	reasonBand: (band, limit) => `${band} (≤ ${limit} $/Mtok): mejor relación capacidades/precio.`,
 	reasonPower: (limit) =>
 		`Banda alta (≤ ${limit} $/Mtok): capacidades máximas, al precio más bajo con capacidades iguales.`,
@@ -660,6 +677,11 @@ const es: Messages = {
 	statusTier: (tier) => `tier ${tier}`,
 	missingConfigWarning: (path) =>
 		`Jev Router: no se encontró ninguna configuración (${path}). El router no está restringido. Ejecuta /jev-models para crear una.`,
+	summaryVirtual: (id) => `Modelo virtual: ${id} — selecciónalo con /model para enrutar dentro de Pi`,
+	routerConfigMissing: (path) =>
+		`Jev Router: no se encontró configuración (${path}). jev/auto enruta desde todo el catálogo bajo el cost tier. Ejecuta /jev-models para restringirlo.`,
+	routerNoCandidate: (band, ceiling) =>
+		`Ningún modelo disponible (${band}, límite ${ceiling} $/Mtok). Relaja excludedModels, sube costTier o añade un modelo con /jev-models.`,
 
 	cmdModels: "Gestionar los modelos que el router typesafe/jev-router puede elegir",
 	cmdRecommend: "Propone los 3 modelos más adecuados para el router, según el catálogo de OpenRouter en vivo",
@@ -763,6 +785,7 @@ const it: Messages = {
 	ceilingDearest: (dearest) => `modello più caro della lista (${dearest} $/Mtok) + 10%`,
 	bandFlash: "Fascia flash",
 	bandBalanced: "Fascia equilibrata",
+	bandPower: "Fascia alta",
 	reasonBand: (band, limit) => `${band} (≤ ${limit} $/Mtok): miglior rapporto capacità/prezzo.`,
 	reasonPower: (limit) =>
 		`Fascia alta (≤ ${limit} $/Mtok): capacità massime, al prezzo più basso a parità di capacità.`,
@@ -796,6 +819,11 @@ const it: Messages = {
 	statusTier: (tier) => `tier ${tier}`,
 	missingConfigWarning: (path) =>
 		`Jev Router: nessuna configurazione trovata (${path}). Il router non è limitato. Esegui /jev-models per crearne una.`,
+	summaryVirtual: (id) => `Modello virtuale: ${id} — selezionalo con /model per instradare dentro Pi`,
+	routerConfigMissing: (path) =>
+		`Jev Router: nessuna configurazione trovata (${path}). jev/auto instrada dall'intero catalogo sotto il cost tier. Esegui /jev-models per limitarlo.`,
+	routerNoCandidate: (band, ceiling) =>
+		`Nessun modello disponibile (${band}, tetto ${ceiling} $/Mtok). Allenta excludedModels, alza costTier o aggiungi un modello con /jev-models.`,
 
 	cmdModels: "Gestisci i modelli che il router typesafe/jev-router può scegliere",
 	cmdRecommend: "Propone i 3 modelli più adatti al router, dal catalogo OpenRouter live",
@@ -901,6 +929,7 @@ const de: Messages = {
 	ceilingDearest: (dearest) => `teuerstes Modell der Liste (${dearest} $/Mtok) + 10 %`,
 	bandFlash: "Flash-Band",
 	bandBalanced: "Ausgewogenes Band",
+	bandPower: "High-End-Band",
 	reasonBand: (band, limit) => `${band} (≤ ${limit} $/Mtok): bestes Verhältnis Fähigkeiten/Preis.`,
 	reasonPower: (limit) =>
 		`High-End-Band (≤ ${limit} $/Mtok): maximale Fähigkeiten zum niedrigsten Preis bei gleichen Fähigkeiten.`,
@@ -934,6 +963,11 @@ const de: Messages = {
 	statusTier: (tier) => `tier ${tier}`,
 	missingConfigWarning: (path) =>
 		`Jev Router: keine Konfiguration gefunden (${path}). Der Router ist nicht eingeschränkt. Führe /jev-models aus, um eine zu erstellen.`,
+	summaryVirtual: (id) => `Virtuelles Modell: ${id} — mit /model auswählen, um in Pi zu routen`,
+	routerConfigMissing: (path) =>
+		`Jev Router: keine Konfiguration gefunden (${path}). jev/auto routet aus dem gesamten Katalog unter dem cost tier. Führe /jev-models aus, um ihn einzuschränken.`,
+	routerNoCandidate: (band, ceiling) =>
+		`Kein Modell verfügbar (${band}, Grenze ${ceiling} $/Mtok). excludedModels lockern, costTier erhöhen oder ein Modell mit /jev-models hinzufügen.`,
 
 	cmdModels: "Die Modelle verwalten, die der Router typesafe/jev-router wählen darf",
 	cmdRecommend: "Schlägt die 3 am besten geeigneten Modelle für den Router vor, aus dem Live-OpenRouter-Katalog",
