@@ -10,11 +10,16 @@
     "",
     "Prices below are only illustrative. `models` is a preference list WITH",
     "fallback on OpenRouter's side; `excludedModels` is a HARD restriction and is",
-    "the actual cost guardrail."
+    "the actual cost guardrail.",
+    "",
+    "`language` sets the language of the extension UI: \"auto\" (default, follows",
+    "Pi's settings, then $PI_LANG, then the system locale), or one of en, fr, es,",
+    "it, de. It can also be changed from /jev-models -> Language."
   ],
   "enabled": true,
   "routerModel": "typesafe/jev-router",
   "costTier": "low",
+  "language": "auto",
   "allowedModels": [
     {
       "model": "z-ai/glm-5.3-flash",

@@ -10,7 +10,16 @@ pi install npm:pi-jev-mgt
 pi --model typesafe/jev-router
 ```
 
-The extension UI and messages are in French; this README and the code comments are in English.
+
+## Objectives 
+
+This plugin has been vibe coded through Pi Agent. The aim it to provide a plugin to manage typesafe/jev-router's model to make it select the model perfect match against your prompts. 
+
+This plugin is opened to any pull request and contribution. Feel free to PR !
+
+The extension UI is available in **English, French, Spanish, Italian and German**,
+and follows the language selected in Pi (see [Languages](#languages)). This README
+and the code comments are in English.
 
 ---
 
@@ -69,10 +78,48 @@ The file is re-read whenever its mtime changes: **no `/reload` needed**. `/jev-m
 | `enabled` | boolean | `false` disables plugin injection without switching models |
 | `routerModel` | string | Router slug (keep `typesafe/jev-router`) |
 | `costTier` | `low` \| `medium` \| `high` | Router policy, **not** the reasoning effort |
+| `language` | `"auto"` \| `en` \| `fr` \| `es` \| `it` \| `de` | UI language of the extension; `"auto"` (default) follows Pi and the system. Also settable from `/jev-models` → *Language* |
 | `allowedModels` | array | Entries: exact slug, dated revision, wildcard (`anthropic/*`, `*flash*`), alias (`~author/family-latest`), or `{ model, tier, note }` objects |
 | `excludedModels` | array | Hard exclusions, same pattern language |
 
 A complete example lives in [`examples/jev-router.example.json`](examples/jev-router.example.json). Model slugs and prices change constantly — verify them with `/jev-models` → *Explorer le catalogue* or let `/jev-recommend` pick from the live catalog.
+
+## Languages
+
+Every on-screen string — status bar, notifications, dialogs, menus and the
+slash-command descriptions — comes from `extensions/i18n.ts`, which ships one
+catalog per supported language: `en` (default), `fr`, `es`, `it`, `de`.
+
+Pi itself has no language setting, so the extension resolves the language from
+the first source that names a supported one:
+
+| # | Source | Notes |
+| --- | --- | --- |
+| 1 | `$PI_JEV_LANG` (or `$PI_JEV_ROUTER_LANG`) | Explicit, plugin-scoped override — handy for scripts and tests |
+| 2 | `language` in the jev-router config | The value `/jev-models` → *Language* writes; same precedence as the config file |
+| 3 | `$PI_LANG` | Forward-compatible Pi override |
+| 4 | `language` in a Pi `settings.json` | `<cwd>/.pi/settings.json`, then `~/.pi/agent/settings.json` |
+| 5 | `$LC_ALL`, `$LC_MESSAGES`, `$LANG` | Operating-system locale |
+| 6 | — | English |
+
+`"language": "auto"` (the default), an empty value or an unsupported tag means
+"keep looking". Locale tags such as `fr-FR` or `de_DE.UTF-8` and native names
+(`Français`, `Deutsch`, …) are accepted.
+
+Pick a language interactively with `/jev-models` → *Language*; the choice is
+written to the config and applied immediately, no `/reload` needed. Export
+`PI_JEV_LANG=de` to override it for a single session:
+
+```bash
+PI_JEV_LANG=es pi --model typesafe/jev-router
+```
+
+Menu dispatch never compares translated labels: each row carries a stable id, so
+translations can be reworded or reordered without breaking a dialog.
+
+The one exception is the slash-command descriptions registered with Pi, which are
+fixed at extension load time; a language change applies to them on the next Pi
+start (or `/reload`).
 
 ## How the recommendation works
 
@@ -107,7 +154,8 @@ pi -e ./extensions/jev-router.ts   # try the local extension for one session
 Layout:
 
 ```text
-extensions/jev-router.ts   # the whole extension (single file, host packages only)
+extensions/jev-router.ts   # the extension itself
+extensions/i18n.ts         # message catalog for the 5 supported languages
 examples/                  # sample configuration
 .github/workflows/ci.yml   # typecheck on push / PR
 ```
@@ -124,7 +172,7 @@ Pi resolves the extension through the `pi.extensions` manifest in `package.json`
 
 ## Français (résumé)
 
-`pi-jev-mgt` gère le routeur OpenRouter `typesafe/jev-router` depuis Pi : liste de modèles autorisés, exclusions dures (garde-fou anti-coût), `cost_tier`, et recommandation des **3 modèles les plus adaptés** d'après le catalogue et les prix OpenRouter du moment. Commandes : `/jev-models`, `/jev-recommend`, `/jev-router`. La config vit dans `~/.pi/agent/jev-router.json` (ou `<projet>/.pi/jev-router.json`, ou `$PI_JEV_ROUTER_CONFIG`) et est relue à chaud. Aucune clé n'est lue ni stockée : l'extension n'interroge que le catalogue public des modèles.
+`pi-jev-mgt` gère le routeur OpenRouter `typesafe/jev-router` depuis Pi : liste de modèles autorisés, exclusions dures (garde-fou anti-coût), `cost_tier`, et recommandation des **3 modèles les plus adaptés** d'après le catalogue et les prix OpenRouter du moment. Commandes : `/jev-models`, `/jev-recommend`, `/jev-router`. La config vit dans `~/.pi/agent/jev-router.json` (ou `<projet>/.pi/jev-router.json`, ou `$PI_JEV_ROUTER_CONFIG`) et est relue à chaud. L'interface est disponible en anglais (par défaut), français, espagnol, italien et allemand : la langue suit Pi (réglages, `$PI_LANG`, locale système) et se choisit dans `/jev-models` → *Langue* ou via `language` dans le fichier de config (`"auto"` par défaut). Aucune clé n'est lue ni stockée : l'extension n'interroge que le catalogue public des modèles.
 
 ## License
 
